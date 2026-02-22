@@ -1,20 +1,56 @@
 <?php
-require_once '../controllers/AuthController.php';
+require_once __DIR__ . '/../controllers/AuthController.php';
+
+$error = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
     $auth = new AuthController();
+
     if ($auth->register($_POST)) {
-        echo "Register berhasil. <a href='login.php'>Login</a>";
+        header("Location: index.php?page=login");
+        exit();
     } else {
-        echo "Register gagal.";
+        $error = "Register gagal. Email mungkin sudah digunakan.";
     }
 }
 ?>
 
-<h2>Register</h2>
-<form method="POST">
-    <input type="text" name="name" placeholder="Nama" required><br>
-    <input type="email" name="email" placeholder="Email" required><br>
-    <input type="password" name="password" placeholder="Password" required><br>
-    <button type="submit">Register</button>
-</form>
+<div class="login-page">
+    <div class="login-card">
+
+        <h2>Create Account </h2>
+        <p class="login-subtitle">Register to get started</p>
+
+        <?php if ($error): ?>
+            <div class="login-error"><?= $error ?></div>
+        <?php endif; ?>
+
+        <form method="POST">
+
+            <div class="input-group">
+                <label>Nama</label>
+                <input type="text" name="name" required>
+            </div>
+
+            <div class="input-group">
+                <label>Email</label>
+                <input type="email" name="email" required>
+            </div>
+
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" name="password" required>
+            </div>
+
+            <button type="submit" class="login-btn">Register</button>
+
+        </form>
+
+        <div class="login-footer">
+            Sudah punya akun?
+            <a href="index.php?page=login">Login</a>
+        </div>
+
+    </div>
+</div>

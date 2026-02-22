@@ -27,7 +27,12 @@ class TaskDetail {
 
         return $stmt->execute();
     }
-
+    public function delete() {
+    $query = "DELETE FROM task_details WHERE id = :id";
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(':id', $this->id);
+    return $stmt->execute();
+}
     public function getByTask() {
         $query = "SELECT * FROM " . $this->table . "
                   WHERE task_id = :task_id";
@@ -91,7 +96,15 @@ class TaskDetail {
         $total = $row['total'];
         $done = $row['done'];
 
-        $newStatus = ($total > 0 && $total == $done) ? "done" : "doing";
+        if ($total == 0) {
+    $newStatus = "todo";
+} elseif ($done == 0) {
+    $newStatus = "todo";
+} elseif ($done < $total) {
+    $newStatus = "doing";
+} else {
+    $newStatus = "done";
+}
 
         $update = "UPDATE tasks SET status = :status WHERE id = :task_id";
         $stmt = $this->conn->prepare($update);

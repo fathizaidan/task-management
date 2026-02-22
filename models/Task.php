@@ -31,7 +31,7 @@ class Task {
 
         return $stmt->execute();
     }
-
+    
     public function getByProject() {
         $query = "SELECT * FROM " . $this->table . " 
                   WHERE project_id = :project_id";
@@ -56,15 +56,19 @@ class Task {
         return $stmt->execute();
     }
 
-    public function delete() {
-        $query = "DELETE FROM " . $this->table . " 
-                  WHERE id = :id";
+public function delete() {
 
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':id', $this->id);
+    // hapus semua detail dulu
+    $stmt = $this->conn->prepare("DELETE FROM task_details WHERE task_id = :task_id");
+    $stmt->bindParam(':task_id', $this->id);
+    $stmt->execute();
 
-        return $stmt->execute();
-    }
+    // hapus task
+    $stmt = $this->conn->prepare("DELETE FROM tasks WHERE id = :id");
+    $stmt->bindParam(':id', $this->id);
+
+    return $stmt->execute();
+}
 
     public function getWithProject() {
     $query = "SELECT tasks.*, projects.title as project_name
