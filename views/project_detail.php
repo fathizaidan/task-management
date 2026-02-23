@@ -7,6 +7,10 @@ if (!isset($_SESSION['user_id'])) {
 
 require_once __DIR__ . '/../models/Task.php';
 require_once __DIR__ . '/../models/TaskDetail.php';
+require_once __DIR__ . '/../models/TaskAttachment.php';
+
+$taskModel = new Task();
+$attachmentModel = new TaskAttachment();
 
 $project_id = $_GET['id'] ?? null;
 
@@ -19,7 +23,59 @@ $taskModel = new Task();
 $taskModel->project_id = $project_id;
 
 /* ================= HANDLE ACTION ================= */
+if (isset($_POST['upload_attachment'])) {
 
+    $task_id = $_POST['task_id'];
+
+    if (!empty($_FILES['attachment']['name'])) {
+
+        $fileName = $_FILES['attachment']['name'];
+        $tmpName  = $_FILES['attachment']['tmp_name'];
+        $fileSize = $_FILES['attachment']['size'];
+
+        $allowed = ['pdf','jpg','jpeg','png','doc','docx','xls','xlsx','txt','zip'];
+        $ext = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+
+        if (!in_array($ext, $allowed)) {
+            echo "Format file tidak didukung";
+            exit();
+        }
+
+        if ($fileSize > 10000000) {
+            echo "File terlalu besar (max 10MB)";
+            exit();
+        }
+
+        $baseName = pathinfo($fileName, PATHINFO_FILENAME);
+        $newName = time() . "_" . $baseName . "." . $ext;
+
+        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . "/task-management/upload/";
+        $target = $uploadDir . $newName;
+
+        if (move_uploaded_file($tmpName, $target)) {
+
+            $attachmentModel->task_id = $task_id;
+            $attachmentModel->file_name = $fileName;
+            $attachmentModel->file_path = $newName;
+            $attachmentModel->create();
+
+        } else {
+            echo "Gagal pindah file";
+            exit();
+        }
+    }
+
+    header("Location: index.php?page=project-detail&id=$project_id");
+    exit();
+}
+if (isset($_GET['delete_attachment'])) {
+
+    $attachmentModel->id = $_GET['delete_attachment'];
+    $attachmentModel->delete();
+
+    header("Location: index.php?page=project-detail&id=$project_id");
+    exit();
+}
 // TAMBAH TASK
 if (isset($_POST['add_task'])) {
     $taskModel->title = $_POST['title'];
@@ -158,11 +214,20 @@ if ($task['status'] === $key):
         </div>
         <div class="progress-text"><?php echo $progress; ?>%</div>
     <?php endif; ?>
+    <?php
+    $attachmentModel->task_id = $task['id'];
+    $countAttachment = count($attachmentModel->getByTask());
+    ?>
+
+    <?php if ($countAttachment > 0): ?>
+        <div style="font-size:12px;margin-top:6px;color:#666;">
+            📎 <?= $countAttachment ?>
+        </div>
+    <?php endif; ?>
 </div>
 
 <!-- MODAL -->
 <div id="modal-<?php echo $task['id']; ?>" class="task-modal">
-
     <div class="modal-content">
 
         <div class="modal-header">
@@ -177,7 +242,33 @@ if ($task['status'] === $key):
         <div class="modal-deadline">
             📅 Deadline: <?php echo $task['deadline']; ?>
         </div>
+        <!-- ATTACHMENT SECTION -->
+        <h6>Attachment</h6>
 
+        <form method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="task_id" value="<?= $task['id']; ?>">
+            <input type="file" name="attachment" required>
+            <button type="submit" name="upload_attachment">Upload</button>
+        </form>
+
+        <?php
+        $attachmentModel->task_id = $task['id'];
+        $attachments = $attachmentModel->getByTask();
+        ?>
+
+        <?php foreach($attachments as $file): ?>
+            <div style="margin-top:8px;">
+                <a href="../upload/<?= $file['file_path']; ?>" target="_blank">
+                    📎 <?= htmlspecialchars($file['file_name']); ?>
+                </a>
+
+                <a href="index.php?page=project-detail&id=<?= $project_id ?>&delete_attachment=<?= $file['id']; ?>"
+                   onclick="return confirm('Hapus file ini?')"
+                   style="color:red; margin-left:10px;">
+                   ✕
+                </a>
+            </div>
+        <?php endforeach; ?>
         <div class="modal-progress">
             <div class="progress-wrapper">
                 <div class="progress-bar" style="width: <?php echo $progress; ?>%"></div>

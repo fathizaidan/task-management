@@ -735,3 +735,150 @@ body {
 .delete-detail-btn:hover {
   color: #a71d2a;
 }
+/* ===== ATTACHMENT SECTION ===== */
+
+.attachment-section {
+  margin-top: 15px;
+  padding: 14px;
+  background: #f8f9ff;
+  border-radius: 12px;
+  border: 1px solid #e6e9f5;
+}
+
+.attachment-title {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 10px;
+  color: #555;
+}
+
+.attachment-upload {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.attachment-upload input[type="file"] {
+  font-size: 12px;
+}
+
+.attachment-upload button {
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(135deg, #5b6df9, #7b3ff2);
+  color: white;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.attachment-upload button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(91, 109, 249, 0.3);
+}
+
+.attachment-list {
+  margin-top: 12px;
+}
+
+.attachment-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 10px;
+  background: white;
+  border-radius: 8px;
+  margin-bottom: 6px;
+  border: 1px solid #ecefff;
+  font-size: 13px;
+  transition: 0.2s ease;
+}
+
+.attachment-item:hover {
+  background: #f1f3ff;
+}
+
+.attachment-link {
+  color: #4a4aff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.attachment-link:hover {
+  text-decoration: underline;
+}
+
+.attachment-delete {
+  color: #ff4d4d;
+  text-decoration: none;
+  font-size: 14px;
+  transition: 0.2s ease;
+}
+
+.attachment-delete:hover {
+  transform: scale(1.2);
+}
+
+.attachment-empty {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #888;
+}
+.modal-content {
+  padding: 24px;
+}
+
+.attachment-section {
+  margin-top: 18px;
+}
+.attachment-item {
+  gap: 10px;
+}
+
+.attachment-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.attachment-link::before {
+  content: "📄";
+}
+.attachment-upload button {
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+/* HIDE DEFAULT INPUT */
+.custom-file-upload input[type="file"] {
+  display: none;
+}
+
+/* CUSTOM BUTTON */
+.custom-file-upload {
+  padding: 8px 16px;
+  border-radius: 10px;
+  background: #f1f3ff;
+  border: 1px solid #d8dcff;
+  cursor: pointer;
+  font-size: 13px;
+  transition: 0.2s ease;
+}
+
+.custom-file-upload:hover {
+  background: #e6e9ff;
+}
+
+/* FILE NAME TEXT */
+.file-name {
+  font-size: 12px;
+  color: #666;
+  max-width: 140px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
